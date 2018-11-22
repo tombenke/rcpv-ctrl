@@ -1,6 +1,6 @@
 {
   "name": "rcpv-ctrl",
-  "description": "Project archetype for Command Line tools using Node.js",
+  "description": "A command-line tool to control the execution of presentations through rcpv",
   "version": "1.0.0",
   "keywords": [
     "cli",

@@ -8,7 +8,7 @@ rcpv-ctrl
 
 ## About
 
-Project archetype for Command Line tools using Node.js
+A command-line tool to control the execution of presentations through rcpv
 
 It provides only one simple command, that is: `echo`, that echoes back it s only one parameter:
 
