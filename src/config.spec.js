@@ -14,6 +14,10 @@ describe('config', () => {
                 name: thisPackage.name,
                 version: thisPackage.version
             },
+            pdms: {
+                natsUri: "nats://localhost:4222",
+                timeout: 2000
+            },
             present: {
                 uri: "http://localhost:3002",
                 name: "demo"

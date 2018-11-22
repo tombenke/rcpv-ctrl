@@ -9,13 +9,6 @@ import npac from 'npac'
 import pdms from 'npac-pdms-hemera-adapter'
 import npacNatsRxjsGw from 'npac-nats-rxjs-gw'
 
-/*
-const dumpCtx = (ctx, next) => {
-    console.log('dumpCtx:', ctx)
-    next(null, ctx)
-}
-*/
-
 export const start = (argv=process.argv, cb=null) => {
 
     // Use CLI to gain additional parameters, and command to execute
@@ -33,8 +26,8 @@ export const start = (argv=process.argv, cb=null) => {
     ]
 
     const terminators = [
-//        npacNatsRxjsGw.shutdown,
-//        pdms.shutdown
+        npacNatsRxjsGw.shutdown,
+        pdms.shutdown
     ]
 
     const callCommand = (command) => command.type === 'sync' ? npac.makeCallSync(command) : npac.makeCall(command)

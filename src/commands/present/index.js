@@ -7,12 +7,14 @@ import { makeRestCall } from './webClient'
 
 const speakTopicTapWriter = container => container.npacNatsRxjsGw.natsTopicTapWriter('speak')
 const presentationTopicTapWriter = container => container.npacNatsRxjsGw.natsTopicTapWriter('presentation')
+const speakStatusObservable = container => container.npacNatsRxjsGw.natsTopicObservable('speakStatus')
 
 export const presentPage = (container, baseUri, name) => (it) => {
     return forkJoin(
-        interval(it.duration).pipe(take(1)),
+//        interval(it.duration).pipe(take(1)),
         of(makeShowPageMsg(`${baseUri}/${name}/${it.uri}`)).pipe(presentationTopicTapWriter(container)),
-        of(makeSayMsg(it.text)).pipe(speakTopicTapWriter(container))
+        of(makeSayMsg(it.text)).pipe(speakTopicTapWriter(container)),
+        speakStatusObservable(container).pipe(take(1))
     )
 }
 
