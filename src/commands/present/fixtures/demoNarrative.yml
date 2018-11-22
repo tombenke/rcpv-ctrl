@@ -1,0 +1,9 @@
+- uri: 1.html
+  text: The first page
+  duration: 300
+- uri: 2.html
+  text: The second page
+  duration: 300
+- uri: 3.html
+  text: The third page
+  duration: 300

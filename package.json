@@ -1,0 +1,89 @@
+{
+  "name": "rcpv-ctrl",
+  "description": "Project archetype for Command Line tools using Node.js",
+  "version": "1.0.0",
+  "keywords": [
+    "cli",
+    "util",
+    "tool",
+    "utility"
+  ],
+  "author": {
+    "name": "Tamás Benke",
+    "email": "tombenke@gmail.com"
+  },
+  "contributors": [],
+  "bugs": {
+    "url": "https://github.com/tombenke/rcpv-ctrl/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/tombenke/rcpv-ctrl.git"
+  },
+  "bin": {
+    "rcpv-ctrl": "./dist/app.js"
+  },
+  "main": "index",
+  "dependencies": {
+    "cookie": "^0.3.1",
+    "datafile": "3.2.0",
+    "isomorphic-fetch": "^2.2.1",
+    "lodash": "4.17.11",
+    "nock": "^10.0.2",
+    "npac": "2.0.3",
+    "npac-nats-rxjs-gw": "^1.0.0",
+    "npac-pdms-hemera-adapter": "^1.4.1",
+    "rxjs": "^6.3.3",
+    "sinon": "^7.1.1",
+    "yargs": "12.0.2"
+  },
+  "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-core": "6.26.3",
+    "babel-loader": "8.0.4",
+    "babel-plugin-transform-object-rest-spread": "6.26.0",
+    "babel-plugin-transform-es2015-parameters": "6.24.1",
+    "babel-polyfill": "6.26.0",
+    "babel-preset-env": "1.7.0",
+    "babel-preset-es2015": "6.24.1",
+    "babel-preset-latest": "6.24.1",
+    "babel-register": "6.26.0",
+    "chai": "4.2.0",
+    "coveralls": "3.0.2",
+    "cross-env": "5.2.0",
+    "eslint": "5.9.0",
+    "expect": "23.6.0",
+    "gulp": "3.9.1",
+    "gulp-debug": "4.0.0",
+    "gulp-markdown": "3.0.0",
+    "gulp-mustache": "4.1.0",
+    "gulp-rename": "1.4.0",
+    "gulp-through": "0.4.0",
+    "istanbul": "1.0.0-alpha.2",
+    "jsdoc": "3.5.5",
+    "mocha": "5.2.0",
+    "mocha-lcov-reporter": "1.3.0",
+    "pre-push": "0.1.1",
+    "rimraf": "2.6.2",
+    "should": "13.2.3",
+    "vinyl-buffer": "1.0.1"
+  },
+  "scripts": {
+    "build": "babel src --presets babel-preset-es2015 --out-dir dist",
+    "lint": "eslint src/**.js",
+    "test": "cross-env NODE_ENV=test mocha --recursive --compilers js:babel-register 'src/**/*.spec.js'",
+    "test-single": "cross-env NODE_ENV=test mocha --recursive --compilers js:babel-register $1",
+    "test:watch": "npm test -- --watch",
+    "coverage": "NODE_ENV=test istanbul cover _mocha -- recursive --compilers js:babel-register --timeout 15000 'src/**/*.spec.js'",
+    "coveralls": "NODE_ENV=test istanbul cover _mocha --report lcovonly -- recursive --compilers js:babel-register --timeout 15000 'src/**/*.spec.js' -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "docs": "rm -fr ./docs/api/* && jsdoc -c ./.jsdoc.json",
+    "docgen": "node_modules/.bin/gulp docgen",
+    "prepublishOnly": "npm run lint && npm run test && npm run build && npm run docs",
+    "all": "npm run lint && npm run coverage && npm run build && npm run docs"
+  },
+  "pre-push": [
+    "lint",
+    "test"
+  ]
+}
