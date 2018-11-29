@@ -1,0 +1,4 @@
+topic: speakStatus
+type: sayError
+timestamp: 1542952482102
+payload: voice-unavailable

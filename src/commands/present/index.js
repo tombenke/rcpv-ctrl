@@ -11,7 +11,7 @@ const speakStatusObservable = container => container.npacNatsRxjsGw.natsTopicObs
 
 export const presentPage = (container, baseUri, name) => (it) => {
     return forkJoin(
-//        interval(it.duration).pipe(take(1)),
+        interval(_.get(it, 'duration', 0)).pipe(take(1)),
         of(makeShowPageMsg(`${baseUri}/${name}/${it.uri}`)).pipe(presentationTopicTapWriter(container)),
         of(makeSayMsg(it.text)).pipe(speakTopicTapWriter(container)),
         speakStatusObservable(container).pipe(take(1))
