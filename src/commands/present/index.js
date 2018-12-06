@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { of, forkJoin, from, interval, pipe } from 'rxjs'
-import { flatMap, concatMap, take, tap } from 'rxjs/operators'
+import { last, map, scan, flatMap, concatMap, take, tap } from 'rxjs/operators'
 import { makeShowPageMsg, makeSayMsg } from './messages'
 import { printMsg } from './trace'
 import { makeRestCall } from './webClient'
@@ -32,7 +32,7 @@ export const getTheNarrative = (container, serverUri, name) => {
 
 export const getPresentationsIdx = (container, serverUri) => {
     const uri = `${serverUri}/index.json`
-    console.log('Presentations Index URI: ', uri)
+    //console.log('Presentations Index URI: ', uri)
     return makeRestCall(uri, {
         method: 'GET',
         credentials: 'same-origin',
@@ -42,16 +42,66 @@ export const getPresentationsIdx = (container, serverUri) => {
     })
 }
 
+export const reportDuration = container => it => {
+    const startAt = _.find(it, o => o.type === 'show' || o.type === 'say').timestamp
+    const stopAt = _.find(it, o => o.type === 'sayCompleted').timestamp
+    const showUri = _.find(it, o => o.type === 'show').payload
+    const sayText = _.find(it, o => o.type === 'say').payload
+    const duration = stopAt - startAt
+
+    console.log('\n\n======================')
+    console.log('uri: ', showUri)
+    console.log('text: ', sayText)
+    console.log(`duration: ${duration} ms\n`)
+    return {
+        startAt: startAt,
+        stopAt: stopAt,
+        showUri: showUri,
+        sayText: sayText
+    }
+}
+
+export const printFinalStats = (container, results) => {
+    if (_.isArray(results) && results.length > 0 && _.has(results[0], 'startAt')) {
+        const baseStartAt = results[0].startAt
+        const stats = _.map(results, it => ({
+            ...it,
+            startAt: it.startAt - baseStartAt,
+            stopAt: it.stopAt - baseStartAt,
+            duration: it.stopAt - it.startAt
+        }))
+            console.log('\n\nFINAL STATS:')
+            _.map(stats, (it, idx) => {
+                console.log(`\n#${idx + 1}.`)
+                console.log(it.showUri)
+                console.log(it.sayText)
+                console.log(`from: ${it.startAt} ms`)
+                console.log(`to: ${it.startAt + it.duration} ms`)
+                console.log(`duration: ${it.duration} ms`)
+            })
+            console.log('\n\n')
+    } else {
+        container.logger.error('Wrong results!')
+    }
+}
+
 export const doPresentation = (container, args, endCb) => {
     getPresentationsIdx(container, args.uri).then(presentationsIdx => {
             from(getTheNarrative(container, args.uri, args.name)).pipe(
                 flatMap(function(x) { return x; }),
-                tap(printMsg('-> presentPage')),
+//                tap(printMsg('-> presentPage')),
                 concatMap(presentPage(container, args.uri, args.name)),
-                tap(printMsg('presentPage ->'))
+//                tap(printMsg('presentPage ->')),
+                map(reportDuration(container)),
+                scan((acc, value, idx) => {
+                    acc.push(value)
+                    return acc
+                }, []),
+                last()
             ).subscribe(
                 it => {
-                    console.log(it)
+//                    console.log('OUTPUT: ', it)
+                    printFinalStats(container, it)
                 },
                 err => {
                     container.logger.error('Error:', err)
